@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(to right, #f0f4f8, #e1e8ed);
+            color: #333;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 600px;
+            margin-top: 100px;
+            padding: 30px;
+            border-radius: 10px;
+            background: #ffffff;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s;
+        }
+
+        .btn-custom {
+            background-color: #aab3b9;
+            color: #ffffff;
+        }
+
+        .btn-custom:hover {
+            background-color: #8f9aa0;
+            color: #ffffff;
+        }
+
+        h2 {
+            font-family: 'Arial', sans-serif;
+            color: #4a4a4a;
+            transition: color 0.3s;
+        }
+
+        a {
+            color: #007b8a;
+        }
+
+        a:hover {
+            color: #005f67;
+        }
+
+        .form-control {
+            border-radius: 25px;
+            border: 1px solid #d1d9df;
+            padding: 15px;
+            font-size: 16px;
+            background-color: #f7f7f7;
+        }
+
+        .input-group button {
+            border-radius: 25px;
+            background-color: #aab3b9;
+            color: #ffffff;
+        }
+
+        .input-group button:hover {
+            background-color: #8f9aa0;
+            color: #ffffff;
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background: #121212;
+            color: #ffffff;
+        }
+
+        .dark-mode .container {
+            background: #1e1e1e;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+        }
+
+        .dark-mode .form-control {
+            background-color: #333;
+            color: #ffffff;
+            border: 1px solid #555;
+        }
+
+        .dark-mode .form-control::placeholder {
+            color: #ffffff;
+        }
+
+        .dark-mode .btn-custom {
+            background-color: #444;
+        }
+
+        .dark-mode .btn-custom:hover {
+            background-color: #666;
+        }
+
+        .dark-mode h2 {
+            color: #ffffff;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .toggle-icon {
+            cursor: pointer;
+            font-size: 1.5rem;
+            position: absolute;
+            top: -10px;
+            right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container text-center">
+        <div class="toggle-container">
+            <h2>🔗 Simple URL Shortener</h2>
+            <span id="mode-toggle" class="toggle-icon">🌙</span>
+        </div>
+        <form id="shorten-form" class="mt-4">
+            <div class="input-group">
+                <input type="url" id="url" class="form-control" placeholder="Enter URL" required>
+                <button type="submit" class="btn btn-custom">Shorten</button>
+            </div>
+        </form>
+        <div id="result" class="mt-3" style="display: none;">
+            <h5>Shortened URL:</h5>
+            <a id="short-url" href="#" target="_blank"></a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById("shorten-form").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const url = document.getElementById("url").value;
+            const response = await fetch("/shorten", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `original_url=${encodeURIComponent(url)}`
+            });
+            const data = await response.json();
+            document.getElementById("short-url").href = "http://" + data.short_url;
+            document.getElementById("short-url").innerText = "http://" + data.short_url;
+            document.getElementById("result").style.display = "block";
+        });
+
+        document.getElementById("mode-toggle").addEventListener("click", function () {
+            document.body.classList.toggle("dark-mode");
+            this.textContent = document.body.classList.contains("dark-mode") ? "☀️" : "🌙";
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
